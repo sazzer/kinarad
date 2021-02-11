@@ -2,6 +2,10 @@ module "api" {
   source = "./infrastructure/api"
 }
 
+module "cognito" {
+  source = "./infrastructure/cognito"
+}
+
 module "home" {
   source = "./modules/home"
 
