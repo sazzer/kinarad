@@ -37,6 +37,11 @@ resource "aws_iam_role" "home_lambda_role" {
   ]
 }
 EOF
+
+  tags = {
+    project     = "kinarad"
+    environment = terraform.workspace
+  }
 }
 
 resource "aws_lambda_permission" "home_lambda_permission" {
@@ -44,10 +49,5 @@ resource "aws_lambda_permission" "home_lambda_permission" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.home_lambda.arn
   principal     = "apigateway.amazonaws.com"
-  source_arn    = join("/", [aws_apigatewayv2_api.api.execution_arn, "*", "*", "*"])
-}
-
-resource "aws_iam_role_policy_attachment" "home_lambda_execution" {
-  role       = aws_iam_role.home_lambda_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  source_arn    = join("/", [var.api_gateway_arn, "*", "*", "*"])
 }

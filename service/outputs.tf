@@ -1,3 +1,3 @@
 output "endpoint" {
-  value = module.home.endpoint
+  value = module.api.endpoint
 }
