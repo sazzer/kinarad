@@ -11,3 +11,7 @@ output "client_secret" {
 output "url" {
   value = "https://${aws_cognito_user_pool_domain.domain.domain}.auth.${data.aws_region.current.name}.amazoncognito.com"
 }
+
+output "issuer" {
+  value = "https://${aws_cognito_user_pool.pool.endpoint}"
+}

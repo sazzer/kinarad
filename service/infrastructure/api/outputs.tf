@@ -7,3 +7,7 @@ output "endpoint" {
 output "arn" {
   value = aws_apigatewayv2_api.api.execution_arn
 }
+
+output "authorizer" {
+  value = aws_apigatewayv2_authorizer.cognito.id
+}

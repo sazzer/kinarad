@@ -30,3 +30,14 @@ resource "aws_apigatewayv2_stage" "main" {
   }
 }
 
+resource "aws_apigatewayv2_authorizer" "cognito" {
+  api_id           = aws_apigatewayv2_api.api.id
+  authorizer_type  = "JWT"
+  identity_sources = ["$request.header.Authorization"]
+  name             = "kinarad-${terraform.workspace}"
+
+  jwt_configuration {
+    audience = [var.cognito_client_id]
+    issuer   = var.cognito_issuer
+  }
+}
