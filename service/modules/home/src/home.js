@@ -1,6 +1,6 @@
-exports.handler = async () => {
+exports.handler = async (event) => {
   return {
     statusCode: 200,
-    body: "Hello",
+    body: JSON.stringify(event),
   };
 };

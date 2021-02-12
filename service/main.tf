@@ -14,5 +14,5 @@ module "home" {
 
   api_gateway_id  = module.api.id
   api_gateway_arn = module.api.arn
-  authorizer_id   = module.api.authorizer
+  authorizer_id   = module.api.optional_authorizer
 }

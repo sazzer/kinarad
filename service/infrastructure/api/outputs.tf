@@ -8,6 +8,10 @@ output "arn" {
   value = aws_apigatewayv2_api.api.execution_arn
 }
 
-output "authorizer" {
-  value = aws_apigatewayv2_authorizer.cognito.id
+output "full_authorizer" {
+  value = aws_apigatewayv2_authorizer.full.id
+}
+
+output "optional_authorizer" {
+  value = aws_apigatewayv2_authorizer.optional.id
 }

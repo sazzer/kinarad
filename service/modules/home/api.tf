@@ -9,6 +9,6 @@ resource "aws_apigatewayv2_route" "main" {
   api_id             = var.api_gateway_id
   route_key          = "GET /"
   target             = join("/", ["integrations", aws_apigatewayv2_integration.home.id])
-  authorization_type = "JWT"
+  authorization_type = "CUSTOM"
   authorizer_id      = var.authorizer_id
 }
