@@ -17,14 +17,14 @@ resource "aws_apigatewayv2_authorizer" "optional" {
   identity_sources = []
 
   authorizer_uri                    = aws_lambda_function.authorizer_lambda.invoke_arn
-  authorizer_payload_format_version = "2.0"
+  authorizer_payload_format_version = "1.0"
   enable_simple_responses           = false
   authorizer_result_ttl_in_seconds  = 0
 }
 
 data "archive_file" "authorizer_lambda" {
   type        = "zip"
-  source_file = "${path.module}/src/authorizer.js"
+  source_file = "${path.module}/target/lambdas/authorizer.js"
   output_path = "${path.module}/target/authorizer_lambda.zip"
 }
 

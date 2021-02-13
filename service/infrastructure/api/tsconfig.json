@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "outDir": "./target/lambdas/",
+    "noImplicitAny": true,
+    "module": "ESNext",
+    "target": "ES6",
+    "allowJs": true,
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true
+  }
+}
