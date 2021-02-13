@@ -49,5 +49,5 @@ resource "aws_lambda_permission" "home_lambda_permission" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.home_lambda.arn
   principal     = "apigateway.amazonaws.com"
-  source_arn    = join("/", [var.api_gateway_arn, "*", "*", "*"])
+  source_arn    = join("/", [var.api.arn, "*", "*", "*"])
 }
