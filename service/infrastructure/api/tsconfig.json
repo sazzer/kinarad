@@ -2,8 +2,8 @@
   "compilerOptions": {
     "outDir": "./target/lambdas/",
     "noImplicitAny": true,
-    "module": "ESNext",
-    "target": "ES6",
+    "module": "commonjs",
+    "target": "ES5",
     "allowJs": true,
     "sourceMap": true,
     "strict": true,

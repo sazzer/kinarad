@@ -3,13 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "webpack"
+    "build": "webpack",
+    "test": "ava"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.72",
+    "ava": "^3.15.0",
     "ts-loader": "^8.0.17",
+    "ts-node": "^9.1.1",
     "typescript": "^4.1.5",
     "webpack": "^5.21.2",
     "webpack-cli": "^4.5.0"
+  },
+  "dependencies": {},
+  "ava": {
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ]
   }
 }
