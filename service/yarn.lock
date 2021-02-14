@@ -4373,7 +4373,7 @@ memorystream@^0.3.1:
   resolved "https://registry.yarnpkg.com/memorystream/-/memorystream-0.3.1.tgz#86d7090b30ce455d63fbae12dda51a47ddcaf9b2"
   integrity sha1-htcJCzDORV1j+64S3aUaR93K+bI=
 
-meow@^3.3.0:
+meow@^3.3.0, meow@^3.7.0:
   version "3.7.0"
   resolved "https://registry.yarnpkg.com/meow/-/meow-3.7.0.tgz#72cb668b425228290abbfa856892587308a801fb"
   integrity sha1-cstmi0JSKCkKu/qFaJJYcwioAfs=
@@ -4715,6 +4715,13 @@ node-releases@^1.1.70:
   version "1.1.70"
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.70.tgz#66e0ed0273aa65666d7fe78febe7634875426a08"
   integrity sha512-Slf2s69+2/uAD79pVVQo8uSiC34+g8GWY8UH2Qtqv34ZfhYrxpYpfzs9Js9d6O0mbDmALuxaTlplnBTnSELcrw==
+
+noop-cli@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/noop-cli/-/noop-cli-1.0.0.tgz#fbf2457327743e12c8238fb9c0e9ade8c62da883"
+  integrity sha512-2lwAjzwFLMUDn9/YysAJ9+vKz6CF6l9jacbesZP306Wqe6awRVnLxC8AsAu6XZq3NSWEynOSUMqzDyFDnuvqMA==
+  dependencies:
+    meow "^3.7.0"
 
 nopt@^4.0.1:
   version "4.0.3"

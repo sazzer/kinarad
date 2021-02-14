@@ -1,29 +1,8 @@
-const path = require("path");
+const webpackDefaults = require("kinarad-service-webpack");
 
 module.exports = {
+  ...webpackDefaults,
   entry: {
     authorizer: "./src/authorizer/index.ts",
-  },
-  target: "node",
-  mode: "production",
-  optimization: {
-    minimize: false,
-  },
-  module: {
-    rules: [
-      {
-        test: /\.ts$/,
-        use: "ts-loader",
-        exclude: /node_modules/,
-      },
-    ],
-  },
-  resolve: {
-    extensions: [".ts", ".js"],
-  },
-  output: {
-    libraryTarget: "commonjs",
-    filename: "[name].js",
-    path: path.resolve(__dirname, "target/lambdas"),
   },
 };

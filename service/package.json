@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "workspaces": [
-    "infrastructure/api"
+    "infrastructure/api",
+    "common/webpack"
   ],
   "scripts": {
+    "tf:init": "terraform init",
     "build": "lerna exec yarn build",
     "test": "lerna exec yarn test",
     "deploy:terraform": "terraform apply -auto-approve",

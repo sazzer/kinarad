@@ -1,0 +1,12 @@
+{
+  "name": "kinarad-service-webpack",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "noop",
+    "test": "noop"
+  },
+  "devDependencies": {
+    "noop-cli": "^1.0.0"
+  }
+}
