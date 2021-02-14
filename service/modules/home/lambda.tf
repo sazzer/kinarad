@@ -15,6 +15,7 @@ resource "aws_lambda_function" "home_lambda" {
 
   tags = {
     "application" = "kinarad"
+    "module"      = "home"
     "environment" = terraform.workspace
   }
 }
@@ -40,6 +41,7 @@ EOF
 
   tags = {
     project     = "kinarad"
+    "module"    = "home"
     environment = terraform.workspace
   }
 }
