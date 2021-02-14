@@ -3,6 +3,6 @@ const webpackDefaults = require("@kinarad/service-webpack");
 module.exports = {
   ...webpackDefaults,
   entry: {
-    get: "./src/get/index.ts",
+    get: "./src/lambdas/get/index.ts",
   },
 };

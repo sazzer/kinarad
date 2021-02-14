@@ -13,9 +13,14 @@ import {
 export async function handler(
   event: APIGatewayProxyEventV2,
   context: Context
-): Promise<APIGatewayProxyResultV2<string>> {
+): Promise<APIGatewayProxyResultV2> {
   return {
     statusCode: 200,
-    body: "Hello, World!",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      name: event.pathParameters?.userId,
+    }),
   };
 }
