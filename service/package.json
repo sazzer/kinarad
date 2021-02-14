@@ -9,10 +9,11 @@
   ],
   "scripts": {
     "tf:init": "terraform init",
+    "tf:deploy": "terraform apply -auto-approve",
+    "tf:plan": "terraform apply -auto-approve",
     "build": "lerna exec yarn build",
     "test": "lerna exec yarn test",
-    "deploy:terraform": "terraform apply -auto-approve",
-    "deploy": "run-s build deploy:terraform"
+    "deploy": "run-s build tf:plan tf:deploy"
   },
   "devDependencies": {
     "lerna": "^3.22.1",
