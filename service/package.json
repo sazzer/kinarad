@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "workspaces": [
-    "infrastructure/api",
-    "common/webpack"
+    "common/*",
+    "infrastructure/*",
+    "modules/*"
   ],
   "scripts": {
     "tf:init": "terraform init",

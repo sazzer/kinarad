@@ -1,7 +1,8 @@
 {
   "packages": [
-    "infrastructure/api",
-    "common/webpack"
+    "common/*",
+    "infrastructure/*",
+    "modules/*"
   ],
   "version": "0.1.0",
   "npmClient": "yarn",

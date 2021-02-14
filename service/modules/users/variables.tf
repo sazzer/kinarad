@@ -1,0 +1,2 @@
+variable "api" {}
+variable "cognito" {}

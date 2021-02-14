@@ -13,3 +13,10 @@ module "home" {
 
   api = module.api
 }
+
+module "users" {
+  source = "./modules/users"
+
+  api     = module.api
+  cognito = module.cognito
+}
