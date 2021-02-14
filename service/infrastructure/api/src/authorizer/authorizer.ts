@@ -3,6 +3,10 @@ import {
   APIGatewayRequestAuthorizerEvent,
 } from "aws-lambda";
 
+import { Config } from "./config";
+import { JWTPayload } from "jose/webcrypto/types";
+import { decodeToken } from "./token";
+
 /** The prefix for the bearer token */
 const BEARER_PREFIX = "Bearer ";
 
@@ -10,8 +14,9 @@ const BEARER_PREFIX = "Bearer ";
  * The actual handler for the authorizer.
  * @param event The incoming event
  */
-export async function handler(
-  event: APIGatewayRequestAuthorizerEvent
+export async function authorizer(
+  event: APIGatewayRequestAuthorizerEvent,
+  config: Config
 ): Promise<APIGatewayAuthorizerResult> {
   const authorization = event.headers?.authorization;
 
@@ -22,7 +27,15 @@ export async function handler(
     // The header is present, but it's not a bearer token, so deny the request
     return generatePolicy(event.methodArn, false);
   } else {
-    return generatePolicy(event.methodArn, true);
+    try {
+      const claims = await decodeToken(
+        config,
+        authorization.substr(BEARER_PREFIX.length)
+      );
+      return generatePolicy(event.methodArn, true, claims);
+    } catch (e) {
+      return generatePolicy(event.methodArn, false);
+    }
   }
 }
 
@@ -31,9 +44,13 @@ export async function handler(
  * @param resource The ARN of the resource to generate the policy for
  * @param allowed Whether the request is allowed or not
  */
-function generatePolicy(resource: string, allowed: boolean) {
+function generatePolicy(
+  resource: string,
+  allowed: boolean,
+  claims?: JWTPayload
+) {
   return {
-    principalId: "",
+    principalId: claims?.sub || "",
     policyDocument: {
       Version: "2012-10-17",
       Statement: [
@@ -44,6 +61,8 @@ function generatePolicy(resource: string, allowed: boolean) {
         },
       ],
     },
-    context: {},
+    context: {
+      claimed: JSON.stringify(claims),
+    },
   };
 }

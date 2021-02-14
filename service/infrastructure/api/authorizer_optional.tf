@@ -1,15 +1,3 @@
-resource "aws_apigatewayv2_authorizer" "full" {
-  name             = "kinarad-${terraform.workspace}-full"
-  api_id           = aws_apigatewayv2_api.api.id
-  authorizer_type  = "JWT"
-  identity_sources = ["$request.header.Authorization"]
-
-  jwt_configuration {
-    audience = [var.cognito.client_id]
-    issuer   = var.cognito.issuer
-  }
-}
-
 resource "aws_apigatewayv2_authorizer" "optional" {
   name             = "kinarad-${terraform.workspace}-optional"
   api_id           = aws_apigatewayv2_api.api.id
@@ -36,6 +24,14 @@ resource "aws_lambda_function" "authorizer_lambda" {
   handler          = "authorizer.handler"
   source_code_hash = data.archive_file.authorizer_lambda.output_base64sha256
   runtime          = "nodejs12.x"
+
+  environment {
+    variables = {
+      "COGNITO_ISSUER"   = var.cognito.issuer
+      "COGNITO_CLIENTID" = var.cognito.client_id
+      "DEBUG"            = "*"
+    }
+  }
 
   tags = {
     "application" = "kinarad"

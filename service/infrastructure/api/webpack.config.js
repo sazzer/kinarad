@@ -2,9 +2,13 @@ const path = require("path");
 
 module.exports = {
   entry: {
-    authorizer: "./src/authorizer.ts",
+    authorizer: "./src/authorizer/index.ts",
   },
+  target: "node",
   mode: "production",
+  optimization: {
+    minimize: false,
+  },
   module: {
     rules: [
       {
