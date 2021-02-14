@@ -3,7 +3,7 @@ import {
   APIGatewayRequestAuthorizerEventHeaders,
 } from "aws-lambda";
 import { DecodeError, decodeToken } from "./token";
-import { TOKEN_CONFIG, buildJwk, buildToken } from "./testUtils";
+import { SUBJECT, TOKEN_CONFIG, buildJwk, buildToken } from "./testUtils";
 
 import { authorizer } from "./authorizer";
 import nock from "nock";
@@ -35,7 +35,9 @@ test("No headers", async (t) => {
         },
       ],
     },
-    context: {},
+    context: {
+      claimed: undefined,
+    },
   });
 });
 
@@ -66,7 +68,9 @@ test("No authorization header", async (t) => {
         },
       ],
     },
-    context: {},
+    context: {
+      claimed: undefined,
+    },
   });
 });
 
@@ -99,7 +103,9 @@ test("Non-bearer authorization header", async (t) => {
         },
       ],
     },
-    context: {},
+    context: {
+      claimed: undefined,
+    },
   });
 });
 
@@ -132,7 +138,9 @@ test("Invalid token in header", async (t) => {
         },
       ],
     },
-    context: {},
+    context: {
+      claimed: undefined,
+    },
   });
 });
 
@@ -160,19 +168,24 @@ test("Valid token in header", async (t) => {
     TOKEN_CONFIG
   );
 
-  t.deepEqual(result, {
-    principalId: "",
-    policyDocument: {
-      Version: "2012-10-17",
-      Statement: [
-        {
-          Action: "execute-api:Invoke",
-          Effect: "Allow",
-          Resource: "some-method-arn",
-        },
-      ],
-    },
-    context: {},
+  t.is(result.principalId, SUBJECT);
+  t.deepEqual(result.policyDocument, {
+    Version: "2012-10-17",
+    Statement: [
+      {
+        Action: "execute-api:Invoke",
+        Effect: "Allow",
+        Resource: "some-method-arn",
+      },
+    ],
   });
+
+  t.deepEqual(Object.keys(result.context || {}), ["claimed"]);
+
+  const claims = JSON.parse(result.context?.claimed?.toString() || "");
+  t.is(claims.aud, TOKEN_CONFIG.clientId);
+  t.is(claims.iss, TOKEN_CONFIG.issuer);
+  t.is(claims.sub, SUBJECT);
+
   t.true(scope.isDone());
 });

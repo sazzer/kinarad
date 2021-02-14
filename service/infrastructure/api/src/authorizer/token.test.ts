@@ -1,5 +1,5 @@
 import { DecodeError, decodeToken } from "./token";
-import { TOKEN_CONFIG, buildJwk, buildToken } from "./testUtils";
+import { SUBJECT, TOKEN_CONFIG, buildJwk, buildToken } from "./testUtils";
 
 import nock from "nock";
 import test from "ava";
@@ -17,7 +17,9 @@ test("Decode valid token", async (t) => {
     await buildToken(key.privateKey)
   );
 
-  t.deepEqual(claims, {});
+  t.is(claims.aud, TOKEN_CONFIG.clientId);
+  t.is(claims.iss, TOKEN_CONFIG.issuer);
+  t.is(claims.sub, SUBJECT);
 
   t.true(scope.isDone());
 });
