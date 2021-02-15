@@ -10,8 +10,18 @@ export function generatePolicy(
   allowed: boolean,
   claims?: JWTPayload
 ) {
+  let claimed: string | undefined = undefined;
+  if (allowed && claims !== undefined) {
+    claimed = JSON.stringify(claims);
+  }
+
+  let principalId = "";
+  if (allowed && claims?.sub !== undefined) {
+    principalId = claims.sub;
+  }
+
   return {
-    principalId: claims?.sub || "",
+    principalId: principalId,
     policyDocument: {
       Version: "2012-10-17",
       Statement: [
@@ -23,7 +33,7 @@ export function generatePolicy(
       ],
     },
     context: {
-      claimed: claims && JSON.stringify(claims),
+      claimed,
     },
   };
 }

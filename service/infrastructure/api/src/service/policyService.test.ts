@@ -63,3 +63,25 @@ test("Generate allowed policy with claims", (t) => {
     },
   });
 });
+
+test("Generate denied policy with claims", (t) => {
+  const policy = generatePolicy("my-test-arn", false, {
+    sub: "my-subject",
+  });
+  t.deepEqual(policy, {
+    principalId: "",
+    policyDocument: {
+      Version: "2012-10-17",
+      Statement: [
+        {
+          Action: "execute-api:Invoke",
+          Effect: "Deny",
+          Resource: "my-test-arn",
+        },
+      ],
+    },
+    context: {
+      claimed: undefined,
+    },
+  });
+});
