@@ -2,26 +2,22 @@ import {
   APIGatewayRequestAuthorizerEvent,
   APIGatewayRequestAuthorizerEventHeaders,
 } from "aws-lambda";
-import { DecodeError, decodeToken } from "./token";
-import { SUBJECT, TOKEN_CONFIG, buildJwk, buildToken } from "./testUtils";
+import { CLIENT_ID, ISSUER, SUBJECT, buildJwk, buildToken } from "../testUtils";
 
-import { authorizer } from "./authorizer";
+import { handler } from "./authorizer";
 import nock from "nock";
 import test from "ava";
 
 test("No headers", async (t) => {
   nock.disableNetConnect();
 
-  const result = await authorizer(
-    {
-      type: "REQUEST",
-      methodArn: "some-method-arn",
-      resource: "",
-      path: "/api",
-      httpMethod: "GET",
-    } as APIGatewayRequestAuthorizerEvent,
-    TOKEN_CONFIG
-  );
+  const result = await handler({
+    type: "REQUEST",
+    methodArn: "some-method-arn",
+    resource: "",
+    path: "/api",
+    httpMethod: "GET",
+  } as APIGatewayRequestAuthorizerEvent);
 
   t.deepEqual(result, {
     principalId: "",
@@ -44,17 +40,14 @@ test("No headers", async (t) => {
 test("No authorization header", async (t) => {
   nock.disableNetConnect();
 
-  const result = await authorizer(
-    {
-      type: "REQUEST",
-      methodArn: "some-method-arn",
-      resource: "",
-      path: "/api",
-      httpMethod: "GET",
-      headers: {},
-    } as APIGatewayRequestAuthorizerEvent,
-    TOKEN_CONFIG
-  );
+  const result = await handler({
+    type: "REQUEST",
+    methodArn: "some-method-arn",
+    resource: "",
+    path: "/api",
+    httpMethod: "GET",
+    headers: {},
+  } as APIGatewayRequestAuthorizerEvent);
 
   t.deepEqual(result, {
     principalId: "",
@@ -77,19 +70,16 @@ test("No authorization header", async (t) => {
 test("Non-bearer authorization header", async (t) => {
   nock.disableNetConnect();
 
-  const result = await authorizer(
-    {
-      type: "REQUEST",
-      methodArn: "some-method-arn",
-      resource: "",
-      path: "/api",
-      httpMethod: "GET",
-      headers: {
-        authorization: "Basic dXNlcm5hbWU6cGFzc3dvcmQK",
-      } as APIGatewayRequestAuthorizerEventHeaders,
-    } as APIGatewayRequestAuthorizerEvent,
-    TOKEN_CONFIG
-  );
+  const result = await handler({
+    type: "REQUEST",
+    methodArn: "some-method-arn",
+    resource: "",
+    path: "/api",
+    httpMethod: "GET",
+    headers: {
+      authorization: "Basic dXNlcm5hbWU6cGFzc3dvcmQK",
+    } as APIGatewayRequestAuthorizerEventHeaders,
+  } as APIGatewayRequestAuthorizerEvent);
 
   t.deepEqual(result, {
     principalId: "",
@@ -112,19 +102,16 @@ test("Non-bearer authorization header", async (t) => {
 test("Invalid token in header", async (t) => {
   nock.disableNetConnect();
 
-  const result = await authorizer(
-    {
-      type: "REQUEST",
-      methodArn: "some-method-arn",
-      resource: "",
-      path: "/api",
-      httpMethod: "GET",
-      headers: {
-        authorization: "Bearer Im-Malformed",
-      } as APIGatewayRequestAuthorizerEventHeaders,
-    } as APIGatewayRequestAuthorizerEvent,
-    TOKEN_CONFIG
-  );
+  const result = await handler({
+    type: "REQUEST",
+    methodArn: "some-method-arn",
+    resource: "",
+    path: "/api",
+    httpMethod: "GET",
+    headers: {
+      authorization: "Bearer Im-Malformed",
+    } as APIGatewayRequestAuthorizerEventHeaders,
+  } as APIGatewayRequestAuthorizerEvent);
 
   t.deepEqual(result, {
     principalId: "",
@@ -154,19 +141,16 @@ test("Valid token in header", async (t) => {
       keys: [key.jwk],
     });
 
-  const result = await authorizer(
-    {
-      type: "REQUEST",
-      methodArn: "some-method-arn",
-      resource: "",
-      path: "/api",
-      httpMethod: "GET",
-      headers: {
-        authorization: `Bearer ${token}`,
-      } as APIGatewayRequestAuthorizerEventHeaders,
-    } as APIGatewayRequestAuthorizerEvent,
-    TOKEN_CONFIG
-  );
+  const result = await handler({
+    type: "REQUEST",
+    methodArn: "some-method-arn",
+    resource: "",
+    path: "/api",
+    httpMethod: "GET",
+    headers: {
+      authorization: `Bearer ${token}`,
+    } as APIGatewayRequestAuthorizerEventHeaders,
+  } as APIGatewayRequestAuthorizerEvent);
 
   t.is(result.principalId, SUBJECT);
   t.deepEqual(result.policyDocument, {
@@ -183,8 +167,8 @@ test("Valid token in header", async (t) => {
   t.deepEqual(Object.keys(result.context || {}), ["claimed"]);
 
   const claims = JSON.parse(result.context?.claimed?.toString() || "");
-  t.is(claims.aud, TOKEN_CONFIG.clientId);
-  t.is(claims.iss, TOKEN_CONFIG.issuer);
+  t.is(claims.aud, CLIENT_ID);
+  t.is(claims.iss, ISSUER);
   t.is(claims.sub, SUBJECT);
 
   t.true(scope.isDone());

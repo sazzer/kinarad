@@ -3,20 +3,22 @@ import {
   APIGatewayRequestAuthorizerEvent,
 } from "aws-lambda";
 
-import { Config } from "./config";
-import { JWTPayload } from "jose/webcrypto/types";
-import { decodeToken } from "./token";
+import { decodeToken } from "../service/tokenService";
+import { generatePolicy } from "../service/policyService";
 
 /** The prefix for the bearer token */
 const BEARER_PREFIX = "Bearer ";
 
 /**
- * The actual handler for the authorizer.
+ * Authorizer for checking if the incoming request has a valid token.
+ * If the token is absent then the authorizer will pass but with no claims.
+ * If the token is present then it must be valid, and will be passed along as the claims.
+ * If the token is present but not valid then the authorizer will fail.
+ *
  * @param event The incoming event
  */
-export async function authorizer(
-  event: APIGatewayRequestAuthorizerEvent,
-  config: Config
+export async function handler(
+  event: APIGatewayRequestAuthorizerEvent
 ): Promise<APIGatewayAuthorizerResult> {
   const authorization = event.headers?.authorization;
 
@@ -29,7 +31,6 @@ export async function authorizer(
   } else {
     try {
       const claims = await decodeToken(
-        config,
         authorization.substr(BEARER_PREFIX.length)
       );
       return generatePolicy(event.methodArn, true, claims);
@@ -37,32 +38,4 @@ export async function authorizer(
       return generatePolicy(event.methodArn, false);
     }
   }
-}
-
-/**
- * Generate an IAM policy for this request
- * @param resource The ARN of the resource to generate the policy for
- * @param allowed Whether the request is allowed or not
- */
-function generatePolicy(
-  resource: string,
-  allowed: boolean,
-  claims?: JWTPayload
-) {
-  return {
-    principalId: claims?.sub || "",
-    policyDocument: {
-      Version: "2012-10-17",
-      Statement: [
-        {
-          Action: "execute-api:Invoke",
-          Effect: allowed ? "Allow" : "Deny",
-          Resource: resource,
-        },
-      ],
-    },
-    context: {
-      claimed: JSON.stringify(claims),
-    },
-  };
 }

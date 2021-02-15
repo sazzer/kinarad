@@ -10,7 +10,7 @@
   "scripts": {
     "tf:init": "terraform init",
     "tf:deploy": "terraform apply -auto-approve",
-    "tf:plan": "terraform apply -auto-approve",
+    "tf:plan": "terraform plan",
     "build": "lerna exec yarn build",
     "test": "lerna exec yarn test",
     "deploy": "run-s build tf:plan tf:deploy"

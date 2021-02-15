@@ -1,17 +1,17 @@
-import { Config } from "./config";
-import { KeyLike } from "jose/webcrypto/types";
-import SignJWT from "jose/webcrypto/jwt/sign";
-import fromKeyLike from "jose/webcrypto/jwk/from_key_like";
-import generateKeyPair from "jose/webcrypto/util/generate_key_pair";
+import { KeyLike } from "jose/types";
+import SignJWT from "jose/jwt/sign";
+import fromKeyLike from "jose/jwk/from_key_like";
+import generateKeyPair from "jose/util/generate_key_pair";
 
-/** The configuration to use for the token processing */
-export const TOKEN_CONFIG: Config = {
-  issuer: "https://cognito-idp.eu-west-2.amazonaws.com/eu-west-2_h96upvx9t",
-  clientId: "FB4AC1CB-1D7E-4125-97DC-7A5B947B9543",
-};
+/** The issuer to use */
+export const ISSUER =
+  "https://cognito-idp.eu-west-2.amazonaws.com/eu-west-2_h96upvx9t";
+
+/** The Client ID to use */
+export const CLIENT_ID = "FB4AC1CB-1D7E-4125-97DC-7A5B947B9543";
 
 /** The key ID to use */
-const KEY_ID = "k+rc3UaUU/yoeMpMLg0nnmeBGuuLRdshDeHPCB0eBGU=";
+export const KEY_ID = "AF50EAA6-9A4A-4526-8537-C6BEB0C4CDDE";
 
 /** The key algorithm to use */
 const KEY_ALG = "RS256";
@@ -32,8 +32,8 @@ export async function buildToken(
       kid: KEY_ID,
     })
     .setIssuedAt()
-    .setIssuer(params?.issuer || TOKEN_CONFIG.issuer)
-    .setAudience(params?.audience || TOKEN_CONFIG.clientId)
+    .setIssuer(params?.issuer || ISSUER)
+    .setAudience(params?.audience || CLIENT_ID)
     .setExpirationTime(params?.expiration || "2h")
     .setSubject(SUBJECT)
     .sign(privateKey);

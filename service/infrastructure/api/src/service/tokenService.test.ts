@@ -1,5 +1,12 @@
-import { DecodeError, decodeToken } from "./token";
-import { SUBJECT, TOKEN_CONFIG, buildJwk, buildToken } from "./testUtils";
+import {
+  CLIENT_ID,
+  ISSUER,
+  KEY_ID,
+  SUBJECT,
+  buildJwk,
+  buildToken,
+} from "../testUtils";
+import { DecodeError, decodeToken } from "./tokenService";
 
 import nock from "nock";
 import test from "ava";
@@ -12,13 +19,10 @@ test("Decode valid token", async (t) => {
       keys: [key.jwk],
     });
 
-  const claims = await decodeToken(
-    TOKEN_CONFIG,
-    await buildToken(key.privateKey)
-  );
+  const claims = await decodeToken(await buildToken(key.privateKey));
 
-  t.is(claims.aud, TOKEN_CONFIG.clientId);
-  t.is(claims.iss, TOKEN_CONFIG.issuer);
+  t.is(claims.aud, CLIENT_ID);
+  t.is(claims.iss, ISSUER);
   t.is(claims.sub, SUBJECT);
 
   t.true(scope.isDone());
@@ -27,13 +31,10 @@ test("Decode valid token", async (t) => {
 test("Decode malformed token", async (t) => {
   nock.disableNetConnect();
 
-  await t.throwsAsync(
-    async () => await decodeToken(TOKEN_CONFIG, "Malformed"),
-    {
-      instanceOf: DecodeError,
-      message: "Failed to decode token",
-    }
-  );
+  await t.throwsAsync(async () => await decodeToken("Malformed"), {
+    instanceOf: DecodeError,
+    message: "Failed to decode token",
+  });
 });
 
 test("No JWKS returned", async (t) => {
@@ -44,8 +45,7 @@ test("No JWKS returned", async (t) => {
     .reply(404);
 
   await t.throwsAsync(
-    async () =>
-      await decodeToken(TOKEN_CONFIG, await buildToken(key.privateKey)),
+    async () => await decodeToken(await buildToken(key.privateKey)),
     {
       instanceOf: DecodeError,
       message: "Failed to retrieve signing key",
@@ -65,12 +65,10 @@ test("Correct JWK not returned", async (t) => {
     });
 
   await t.throwsAsync(
-    async () =>
-      await decodeToken(TOKEN_CONFIG, await buildToken(key.privateKey)),
+    async () => await decodeToken(await buildToken(key.privateKey)),
     {
       instanceOf: DecodeError,
-      message:
-        "No key found for kid: k+rc3UaUU/yoeMpMLg0nnmeBGuuLRdshDeHPCB0eBGU=",
+      message: "No key found for kid: " + KEY_ID,
     }
   );
 
@@ -88,7 +86,6 @@ test("Decode token with wrong issuer", async (t) => {
   await t.throwsAsync(
     async () =>
       await decodeToken(
-        TOKEN_CONFIG,
         await buildToken(key.privateKey, { issuer: "urn:some-other-issuer" })
       ),
     {
@@ -111,7 +108,6 @@ test("Decode token with wrong audience", async (t) => {
   await t.throwsAsync(
     async () =>
       await decodeToken(
-        TOKEN_CONFIG,
         await buildToken(key.privateKey, {
           audience: "urn:some-other-audience",
         })
@@ -136,7 +132,6 @@ test("Decode expired token", async (t) => {
   await t.throwsAsync(
     async () =>
       await decodeToken(
-        TOKEN_CONFIG,
         await buildToken(key.privateKey, {
           expiration: Math.round(new Date().getTime() / 1000) - 60 * 60 * 4, // 4 hours ago
         })
