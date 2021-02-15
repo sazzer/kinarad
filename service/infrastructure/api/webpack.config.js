@@ -1,4 +1,4 @@
-const webpackDefaults = require("@kinarad/service-webpack");
+const webpackDefaults = require("@kinarad-service/webpack");
 
 module.exports = {
   ...webpackDefaults,

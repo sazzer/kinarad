@@ -1,5 +1,5 @@
 {
-  "name": "@kinarad/service-webpack",
+  "name": "@kinarad-service/webpack",
   "version": "0.1.0",
   "private": true,
   "scripts": {

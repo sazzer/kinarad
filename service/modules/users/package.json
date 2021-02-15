@@ -1,5 +1,5 @@
 {
-  "name": "@kinarad/service-users",
+  "name": "@kinarad-service/users",
   "version": "0.1.0",
   "private": true,
   "scripts": {
