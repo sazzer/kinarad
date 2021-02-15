@@ -9,7 +9,7 @@ resource "aws_apigatewayv2_api" "api" {
   }
 
   tags = {
-    project     = "kinarad"
+    application = "kinarad"
     environment = terraform.workspace
   }
 }
@@ -25,7 +25,7 @@ resource "aws_apigatewayv2_stage" "main" {
   }
 
   tags = {
-    project     = "kinarad"
+    application = "kinarad"
     environment = terraform.workspace
   }
 }

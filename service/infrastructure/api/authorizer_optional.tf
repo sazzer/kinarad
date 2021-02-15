@@ -34,8 +34,8 @@ resource "aws_lambda_function" "authorizer_lambda" {
   }
 
   tags = {
-    "application" = "kinarad"
-    "environment" = terraform.workspace
+    application = "kinarad"
+    environment = terraform.workspace
   }
 }
 
@@ -59,7 +59,7 @@ resource "aws_iam_role" "authorizer_lambda_role" {
 EOF
 
   tags = {
-    project     = "kinarad"
+    application = "kinarad"
     environment = terraform.workspace
   }
 }

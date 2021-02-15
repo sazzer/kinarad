@@ -14,8 +14,8 @@ resource "aws_lambda_function" "pre_signup_lambda" {
   runtime          = "nodejs12.x"
 
   tags = {
-    "application" = "kinarad"
-    "environment" = terraform.workspace
+    application = "kinarad"
+    environment = terraform.workspace
   }
 }
 

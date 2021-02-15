@@ -14,9 +14,9 @@ resource "aws_lambda_function" "get_lambda" {
   runtime          = "nodejs12.x"
 
   tags = {
-    "application" = "kinarad"
-    "module"      = "users"
-    "environment" = terraform.workspace
+    application = "kinarad"
+    module      = "users"
+    environment = terraform.workspace
   }
 }
 
@@ -40,8 +40,8 @@ resource "aws_iam_role" "get_lambda_role" {
 EOF
 
   tags = {
-    project     = "kinarad"
-    "module"    = "users"
+    application = "kinarad"
+    module      = "users"
     environment = terraform.workspace
   }
 }

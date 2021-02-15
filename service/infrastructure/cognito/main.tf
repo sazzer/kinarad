@@ -51,8 +51,8 @@ resource "aws_cognito_user_pool" "pool" {
   }
 
   tags = {
-    "application" = "kinarad"
-    "environment" = terraform.workspace
+    application = "kinarad"
+    environment = terraform.workspace
   }
 }
 

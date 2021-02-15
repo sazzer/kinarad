@@ -14,9 +14,9 @@ resource "aws_lambda_function" "home_lambda" {
   runtime          = "nodejs12.x"
 
   tags = {
-    "application" = "kinarad"
-    "module"      = "home"
-    "environment" = terraform.workspace
+    application = "kinarad"
+    module      = "home"
+    environment = terraform.workspace
   }
 }
 
@@ -40,8 +40,8 @@ resource "aws_iam_role" "home_lambda_role" {
 EOF
 
   tags = {
-    project     = "kinarad"
-    "module"    = "home"
+    application = "kinarad"
+    module      = "home"
     environment = terraform.workspace
   }
 }
