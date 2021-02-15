@@ -4,19 +4,22 @@
   "private": true,
   "scripts": {
     "build": "webpack",
-    "test": "noop"
+    "test": "run-s test:lint",
+    "test:lint": "eslint src --ext .ts"
   },
   "devDependencies": {
+    "@kinarad-service/eslint-config": "^0.1.0",
     "@kinarad-service/webpack": "^0.1.0",
     "@types/aws-lambda": "^8.10.72",
     "@types/debug": "^4.1.5",
     "@types/node": "^14.14.27",
-    "noop-cli": "^1.0.0",
+    "npm-run-all": "^4.1.5",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.5"
   },
   "dependencies": {
     "aws-sdk": "^2.843.0",
     "debug": "^4.3.1"
-  }
+  },
+  "prettier": "@kinarad-service/eslint-config/prettier"
 }
