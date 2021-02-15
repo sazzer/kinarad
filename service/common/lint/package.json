@@ -1,0 +1,20 @@
+{
+  "name": "@kinarad-service/eslint-config",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "noop",
+    "test": "noop"
+  },
+  "devDependencies": {
+    "noop-cli": "^1.0.0"
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.15.0",
+    "@typescript-eslint/parser": "^4.15.0",
+    "eslint": "^7.20.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "prettier": "^2.2.1"
+  }
+}
