@@ -1,17 +1,17 @@
-import { generatePolicy } from "./policyService";
-import test from "ava";
+import { generatePolicy } from './policyService';
+import test from 'ava';
 
-test("Generate denied policy", (t) => {
-  const policy = generatePolicy("my-test-arn", false);
+test('Generate denied policy', (t) => {
+  const policy = generatePolicy('my-test-arn', false);
   t.deepEqual(policy, {
-    principalId: "",
+    principalId: '',
     policyDocument: {
-      Version: "2012-10-17",
+      Version: '2012-10-17',
       Statement: [
         {
-          Action: "execute-api:Invoke",
-          Effect: "Deny",
-          Resource: "my-test-arn",
+          Action: 'execute-api:Invoke',
+          Effect: 'Deny',
+          Resource: 'my-test-arn',
         },
       ],
     },
@@ -21,17 +21,17 @@ test("Generate denied policy", (t) => {
   });
 });
 
-test("Generate allowed policy with no claims", (t) => {
-  const policy = generatePolicy("my-test-arn", true);
+test('Generate allowed policy with no claims', (t) => {
+  const policy = generatePolicy('my-test-arn', true);
   t.deepEqual(policy, {
-    principalId: "",
+    principalId: '',
     policyDocument: {
-      Version: "2012-10-17",
+      Version: '2012-10-17',
       Statement: [
         {
-          Action: "execute-api:Invoke",
-          Effect: "Allow",
-          Resource: "my-test-arn",
+          Action: 'execute-api:Invoke',
+          Effect: 'Allow',
+          Resource: 'my-test-arn',
         },
       ],
     },
@@ -41,20 +41,20 @@ test("Generate allowed policy with no claims", (t) => {
   });
 });
 
-test("Generate allowed policy with claims", (t) => {
-  const policy = generatePolicy("my-test-arn", true, {
-    sub: "my-subject",
+test('Generate allowed policy with claims', (t) => {
+  const policy = generatePolicy('my-test-arn', true, {
+    sub: 'my-subject',
   });
 
   t.deepEqual(policy, {
-    principalId: "my-subject",
+    principalId: 'my-subject',
     policyDocument: {
-      Version: "2012-10-17",
+      Version: '2012-10-17',
       Statement: [
         {
-          Action: "execute-api:Invoke",
-          Effect: "Allow",
-          Resource: "my-test-arn",
+          Action: 'execute-api:Invoke',
+          Effect: 'Allow',
+          Resource: 'my-test-arn',
         },
       ],
     },
@@ -64,19 +64,19 @@ test("Generate allowed policy with claims", (t) => {
   });
 });
 
-test("Generate denied policy with claims", (t) => {
-  const policy = generatePolicy("my-test-arn", false, {
-    sub: "my-subject",
+test('Generate denied policy with claims', (t) => {
+  const policy = generatePolicy('my-test-arn', false, {
+    sub: 'my-subject',
   });
   t.deepEqual(policy, {
-    principalId: "",
+    principalId: '',
     policyDocument: {
-      Version: "2012-10-17",
+      Version: '2012-10-17',
       Statement: [
         {
-          Action: "execute-api:Invoke",
-          Effect: "Deny",
-          Resource: "my-test-arn",
+          Action: 'execute-api:Invoke',
+          Effect: 'Deny',
+          Resource: 'my-test-arn',
         },
       ],
     },

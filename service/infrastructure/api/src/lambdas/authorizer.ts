@@ -1,13 +1,10 @@
-import {
-  APIGatewayAuthorizerResult,
-  APIGatewayRequestAuthorizerEvent,
-} from "aws-lambda";
+import { APIGatewayAuthorizerResult, APIGatewayRequestAuthorizerEvent } from 'aws-lambda';
 
-import { decodeToken } from "../service/tokenService";
-import { generatePolicy } from "../service/policyService";
+import { decodeToken } from '../service/tokenService';
+import { generatePolicy } from '../service/policyService';
 
 /** The prefix for the bearer token */
-const BEARER_PREFIX = "Bearer ";
+const BEARER_PREFIX = 'Bearer ';
 
 /**
  * Authorizer for checking if the incoming request has a valid token.
@@ -17,9 +14,7 @@ const BEARER_PREFIX = "Bearer ";
  *
  * @param event The incoming event
  */
-export async function handler(
-  event: APIGatewayRequestAuthorizerEvent
-): Promise<APIGatewayAuthorizerResult> {
+export async function handler(event: APIGatewayRequestAuthorizerEvent): Promise<APIGatewayAuthorizerResult> {
   const authorization = event.headers?.authorization;
 
   if (authorization === undefined) {
@@ -30,9 +25,7 @@ export async function handler(
     return generatePolicy(event.methodArn, false);
   } else {
     try {
-      const claims = await decodeToken(
-        authorization.substr(BEARER_PREFIX.length)
-      );
+      const claims = await decodeToken(authorization.substr(BEARER_PREFIX.length));
       return generatePolicy(event.methodArn, true, claims);
     } catch (e) {
       return generatePolicy(event.methodArn, false);

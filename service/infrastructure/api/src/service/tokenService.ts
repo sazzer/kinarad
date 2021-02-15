@@ -1,12 +1,12 @@
-import { JWK, JWTPayload } from "jose/webcrypto/types";
-import jwtVerify, { JWSHeaderParameters } from "jose/jwt/verify";
+import { JWK, JWTPayload } from 'jose/webcrypto/types';
+import jwtVerify, { JWSHeaderParameters } from 'jose/jwt/verify';
 
-import axios from "axios";
-import debug from "debug";
-import parseJwk from "jose/jwk/parse";
+import axios from 'axios';
+import debug from 'debug';
+import parseJwk from 'jose/jwk/parse';
 
 /** The logger to use */
-const LOG = debug("kinarad:infrastructure:api:token");
+const LOG = debug('kinarad:infrastructure:api:token');
 
 /**
  * Decode the provided token to provide the claims for the user.
@@ -19,16 +19,16 @@ export async function decodeToken(token: string): Promise<JWTPayload> {
       issuer: process.env.COGNITO_ISSUER,
       audience: process.env.COGNITO_CLIENTID,
     });
-    LOG("Parsed token: %o", parsed);
+    LOG('Parsed token: %o', parsed);
 
     return parsed.payload;
   } catch (e) {
-    LOG("Failed to parse token %s: %o", token, e);
+    LOG('Failed to parse token %s: %o', token, e);
     if (e instanceof DecodeError) {
       throw e;
     }
 
-    throw new DecodeError("Failed to decode token");
+    throw new DecodeError('Failed to decode token');
   }
 }
 
@@ -57,27 +57,27 @@ interface Keys {
  *
  */
 async function getKey(header: JWSHeaderParameters) {
-  const url = process.env.COGNITO_ISSUER + "/.well-known/jwks.json";
-  LOG("Using URL to retrieve keys: %s", url);
+  const url = process.env.COGNITO_ISSUER + '/.well-known/jwks.json';
+  LOG('Using URL to retrieve keys: %s', url);
 
-  LOG("Getting JWK for kid %s", header.kid);
+  LOG('Getting JWK for kid %s', header.kid);
 
   let keys: Keys;
   try {
     const response = await axios.get<Keys>(url);
     keys = response.data;
   } catch (e) {
-    LOG("Failed to retrieve JWK: %o", e);
-    throw new DecodeError("Failed to retrieve signing key");
+    LOG('Failed to retrieve JWK: %o', e);
+    throw new DecodeError('Failed to retrieve signing key');
   }
-  LOG("Retrieved keys: %o", keys);
+  LOG('Retrieved keys: %o', keys);
 
   const key = keys.keys.find((k) => k.kid === header.kid);
   if (key === undefined) {
-    LOG("No key found for kid %s", header.kid);
-    throw new DecodeError("No key found for kid: " + header.kid);
+    LOG('No key found for kid %s', header.kid);
+    throw new DecodeError('No key found for kid: ' + header.kid);
   }
-  LOG("Got key for kid %s: %o", header.kid, key);
+  LOG('Got key for kid %s: %o', header.kid, key);
 
   return await parseJwk(key);
 }
