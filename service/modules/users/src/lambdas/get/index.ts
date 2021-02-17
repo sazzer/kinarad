@@ -1,5 +1,7 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
 
+import { NOT_FOUND_PROBLEM_TYPE } from '@kinarad-service/http';
+
 /**
  * Handler for retrieving a single user by ID.
  *
@@ -7,13 +9,5 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
  * @param context The context to operate under
  */
 export async function handler(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-  return {
-    statusCode: 200,
-    headers: {
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      name: event.pathParameters?.userId,
-    }),
-  };
+  return NOT_FOUND_PROBLEM_TYPE.toProblem().response(event);
 }
