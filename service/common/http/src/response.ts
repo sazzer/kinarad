@@ -1,4 +1,4 @@
-import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
+import { APIGatewayProxyEventV2, APIGatewayProxyStructuredResultV2 } from 'aws-lambda';
 
 /**
  * Interface that eveything able to generate an HTTP response should implement
@@ -9,5 +9,5 @@ export interface Responder {
    * @param input The input request
    * @returns The output response
    */
-  response: (input: APIGatewayProxyEventV2) => APIGatewayProxyResultV2;
+  response: (input: APIGatewayProxyEventV2) => APIGatewayProxyStructuredResultV2;
 }

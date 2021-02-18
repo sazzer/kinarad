@@ -1,4 +1,4 @@
-import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
+import { APIGatewayProxyEventV2, APIGatewayProxyStructuredResultV2 } from 'aws-lambda';
 
 import { Responder } from '../response';
 
@@ -21,15 +21,43 @@ export class Problem implements Responder {
 
   /**
    * Construct a problem
+   * @param status The status code
    * @param type The type
    * @param title The title
-   * @param status The status code
    */
-  constructor(type: string, title?: string, status?: number) {
-    this.type = type;
+  constructor(status: number, type?: string, title?: string) {
+    this.status = status;
+    this.type = type ?? 'about:blank';
     this.title = title;
-    this.status = status ?? 400;
     this.values = {};
+  }
+
+  /**
+   * Provide a new value for the detail
+   * @param detail The new detail to use
+   */
+  withDetail(detail: string): Problem {
+    this.detail = detail;
+    return this;
+  }
+
+  /**
+   * Provide a new value for the instance
+   * @param instance The new instance to use
+   */
+  withInstance(instance: string): Problem {
+    this.instance = instance;
+    return this;
+  }
+
+  /**
+   * Provide a new value
+   * @param key The key for the new value
+   * @param value The new value
+   */
+  withValue(key: string, value: any): Problem {
+    this.values[key] = value;
+    return this;
   }
 
   /**
@@ -37,7 +65,7 @@ export class Problem implements Responder {
    * @param input The input request
    * @returns The output response
    */
-  response(input: APIGatewayProxyEventV2): APIGatewayProxyResultV2 {
+  response(input: APIGatewayProxyEventV2): APIGatewayProxyStructuredResultV2 {
     const problemBody = {
       type: this.type,
       title: this.title,
