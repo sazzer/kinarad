@@ -2,9 +2,20 @@ import { CLIENT_ID, ISSUER, KEY_ID, SUBJECT, buildJwk, buildToken } from '../tes
 import { DecodeError, decodeToken } from './tokenService';
 
 import nock from 'nock';
-import test from 'ava';
 
-test('Decode valid token', async (t) => {
+const OLD_ENV = process.env;
+
+beforeEach(() => {
+  jest.resetModules();
+  process.env.COGNITO_ISSUER = 'https://cognito-idp.eu-west-2.amazonaws.com/eu-west-2_h96upvx9t';
+  process.env.COGNITO_CLIENTID = 'FB4AC1CB-1D7E-4125-97DC-7A5B947B9543';
+});
+
+afterAll(() => {
+  process.env = OLD_ENV;
+});
+
+test('Decode valid token', async () => {
   const key = await buildJwk();
   const scope = nock('https://cognito-idp.eu-west-2.amazonaws.com')
     .get('/eu-west-2_h96upvx9t/.well-known/jwks.json')
@@ -12,40 +23,39 @@ test('Decode valid token', async (t) => {
       keys: [key.jwk],
     });
 
-  const claims = await decodeToken(await buildToken(key.privateKey));
+  const token = await buildToken(key.privateKey);
+  const claims = await decodeToken(token);
 
-  t.is(claims.aud, CLIENT_ID);
-  t.is(claims.iss, ISSUER);
-  t.is(claims.sub, SUBJECT);
+  expect(claims.aud).toBe(CLIENT_ID);
+  expect(claims.iss).toBe(ISSUER);
+  expect(claims.sub).toBe(SUBJECT);
 
-  t.true(scope.isDone());
+  expect(scope.isDone()).toBe(true);
 });
 
-test('Decode malformed token', async (t) => {
+test('Decode malformed token', async () => {
   nock.disableNetConnect();
 
-  await t.throwsAsync(async () => await decodeToken('Malformed'), {
-    instanceOf: DecodeError,
-    message: 'Failed to decode token',
-  });
+  await expect(async () => await decodeToken('Malformed')).rejects.toThrowErrorMatchingInlineSnapshot(
+    `"Failed to decode token"`
+  );
 });
 
-test('No JWKS returned', async (t) => {
+test('No JWKS returned', async () => {
   const key = await buildJwk();
 
   const scope = nock('https://cognito-idp.eu-west-2.amazonaws.com')
     .get('/eu-west-2_h96upvx9t/.well-known/jwks.json')
     .reply(404);
 
-  await t.throwsAsync(async () => await decodeToken(await buildToken(key.privateKey)), {
-    instanceOf: DecodeError,
-    message: 'Failed to retrieve signing key',
-  });
+  await expect(
+    async () => await decodeToken(await buildToken(key.privateKey))
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"Failed to retrieve signing key"`);
 
-  t.true(scope.isDone());
+  expect(scope.isDone()).toBe(true);
 });
 
-test('Correct JWK not returned', async (t) => {
+test('Correct JWK not returned', async () => {
   const key = await buildJwk();
 
   const scope = nock('https://cognito-idp.eu-west-2.amazonaws.com')
@@ -54,15 +64,14 @@ test('Correct JWK not returned', async (t) => {
       keys: [],
     });
 
-  await t.throwsAsync(async () => await decodeToken(await buildToken(key.privateKey)), {
-    instanceOf: DecodeError,
-    message: 'No key found for kid: ' + KEY_ID,
-  });
+  await expect(
+    async () => await decodeToken(await buildToken(key.privateKey))
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"No key found for kid: AF50EAA6-9A4A-4526-8537-C6BEB0C4CDDE"`);
 
-  t.true(scope.isDone());
+  expect(scope.isDone()).toBe(true);
 });
 
-test('Decode token with wrong issuer', async (t) => {
+test('Decode token with wrong issuer', async () => {
   const key = await buildJwk();
   const scope = nock('https://cognito-idp.eu-west-2.amazonaws.com')
     .get('/eu-west-2_h96upvx9t/.well-known/jwks.json')
@@ -70,18 +79,14 @@ test('Decode token with wrong issuer', async (t) => {
       keys: [key.jwk],
     });
 
-  await t.throwsAsync(
-    async () => await decodeToken(await buildToken(key.privateKey, { issuer: 'urn:some-other-issuer' })),
-    {
-      instanceOf: DecodeError,
-      message: 'Failed to decode token',
-    }
-  );
+  await expect(
+    async () => await decodeToken(await buildToken(key.privateKey, { issuer: 'urn:some-other-issuer' }))
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"Failed to decode token"`);
 
-  t.true(scope.isDone());
+  expect(scope.isDone()).toBe(true);
 });
 
-test('Decode token with wrong audience', async (t) => {
+test('Decode token with wrong audience', async () => {
   const key = await buildJwk();
   const scope = nock('https://cognito-idp.eu-west-2.amazonaws.com')
     .get('/eu-west-2_h96upvx9t/.well-known/jwks.json')
@@ -89,23 +94,19 @@ test('Decode token with wrong audience', async (t) => {
       keys: [key.jwk],
     });
 
-  await t.throwsAsync(
+  await expect(
     async () =>
       await decodeToken(
         await buildToken(key.privateKey, {
           audience: 'urn:some-other-audience',
         })
-      ),
-    {
-      instanceOf: DecodeError,
-      message: 'Failed to decode token',
-    }
-  );
+      )
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"Failed to decode token"`);
 
-  t.true(scope.isDone());
+  expect(scope.isDone()).toBe(true);
 });
 
-test('Decode expired token', async (t) => {
+test('Decode expired token', async () => {
   const key = await buildJwk();
   const scope = nock('https://cognito-idp.eu-west-2.amazonaws.com')
     .get('/eu-west-2_h96upvx9t/.well-known/jwks.json')
@@ -113,18 +114,14 @@ test('Decode expired token', async (t) => {
       keys: [key.jwk],
     });
 
-  await t.throwsAsync(
+  await expect(
     async () =>
       await decodeToken(
         await buildToken(key.privateKey, {
           expiration: Math.round(new Date().getTime() / 1000) - 60 * 60 * 4, // 4 hours ago
         })
-      ),
-    {
-      instanceOf: DecodeError,
-      message: 'Failed to decode token',
-    }
-  );
+      )
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"Failed to decode token"`);
 
-  t.true(scope.isDone());
+  expect(scope.isDone()).toBe(true);
 });
