@@ -182,6 +182,7 @@ test('Valid token in header', async () => {
     }
   `);
 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   expect(Object.keys(result.context!)).toEqual(['claimed']);
 
   const claims = JSON.parse(result.context?.claimed?.toString() || '');

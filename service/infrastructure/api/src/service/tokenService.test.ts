@@ -1,6 +1,6 @@
-import { CLIENT_ID, ISSUER, KEY_ID, SUBJECT, buildJwk, buildToken } from '../testUtils';
-import { DecodeError, decodeToken } from './tokenService';
+import { CLIENT_ID, ISSUER, SUBJECT, buildJwk, buildToken } from '../testUtils';
 
+import { decodeToken } from './tokenService';
 import nock from 'nock';
 
 const OLD_ENV = process.env;
