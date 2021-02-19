@@ -1,11 +1,11 @@
-import { APIGatewayProxyEventV2, APIGatewayProxyStructuredResultV2 } from 'aws-lambda';
-
-import { Responder } from '../response';
+import { ProblemRespose } from './response';
+import { ProblemType } from './types';
+import { Response } from '../response';
 
 /**
- * Representation of a Problem Details response.
+ * Representation of a Problem Details.
  */
-export class Problem implements Responder {
+export class Problem {
   /** The type value */
   private readonly type: string;
   /** The title value */
@@ -17,6 +17,7 @@ export class Problem implements Responder {
   /** The instance value */
   private instance: string | undefined;
   /** Any additional values */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private values: Record<string, any>;
 
   /**
@@ -30,6 +31,14 @@ export class Problem implements Responder {
     this.type = type ?? 'about:blank';
     this.title = title;
     this.values = {};
+  }
+
+  /**
+   * Construct a new problem from some provided problem type details.
+   * @param problemType The problem type to construct from
+   */
+  static fromProblemType(problemType: ProblemType): Problem {
+    return new Problem(problemType.status, problemType.type, problemType.title);
   }
 
   /**
@@ -55,6 +64,7 @@ export class Problem implements Responder {
    * @param key The key for the new value
    * @param value The new value
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types
   withValue(key: string, value: any): Problem {
     this.values[key] = value;
     return this;
@@ -65,7 +75,7 @@ export class Problem implements Responder {
    * @param input The input request
    * @returns The output response
    */
-  response(input: APIGatewayProxyEventV2): APIGatewayProxyStructuredResultV2 {
+  response(): Response {
     const problemBody = {
       type: this.type,
       title: this.title,
@@ -75,13 +85,6 @@ export class Problem implements Responder {
       ...this.values,
     };
 
-    return {
-      statusCode: this.status,
-      body: JSON.stringify(problemBody),
-      headers: {
-        'content-type': 'application/problem+json',
-        'cache-control': 'no-cache',
-      },
-    };
+    return new ProblemRespose(this.status, problemBody);
   }
 }

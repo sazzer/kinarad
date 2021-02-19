@@ -1,15 +1,13 @@
-import { Problem } from './problem';
-
 /**
  * Representation of the type of a problem, to easily generate problems.
  */
 export class ProblemType {
   /** The type value */
-  private readonly type: string | undefined;
+  readonly type: string | undefined;
   /** The title value */
-  private readonly title: string | undefined;
+  readonly title: string | undefined;
   /** The status code */
-  private readonly status: number;
+  readonly status: number;
 
   /**
    * Construct a problem
@@ -21,13 +19,6 @@ export class ProblemType {
     this.status = status;
     this.type = type;
     this.title = title;
-  }
-
-  /**
-   * Generate a Problem from this Problem Type
-   */
-  toProblem(): Problem {
-    return new Problem(this.status, this.type, this.title);
   }
 }
 

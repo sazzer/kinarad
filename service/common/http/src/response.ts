@@ -1,13 +1,28 @@
-import { APIGatewayProxyEventV2, APIGatewayProxyStructuredResultV2 } from 'aws-lambda';
+import { APIGatewayProxyStructuredResultV2 } from 'aws-lambda';
+
+/** Type to represent HTTP headers */
+export type Headers = { [header: string]: boolean | number | string };
 
 /**
- * Interface that eveything able to generate an HTTP response should implement
+ * Representation of a response from an API Gateway call.
  */
-export interface Responder {
+export class Response implements APIGatewayProxyStructuredResultV2 {
+  /** The HTTP Status code */
+  readonly statusCode: number;
+  /** The set of headers */
+  readonly headers: Headers;
+  /** The response body */
+  readonly body?: string;
+
   /**
-   * Actually generate the response for the client
-   * @param input The input request
-   * @returns The output response
+   * Construct the response
+   * @param statusCode The status code
+   * @param headers The HTTP headers
+   * @param body The body
    */
-  response: (input: APIGatewayProxyEventV2) => APIGatewayProxyStructuredResultV2;
+  constructor(statusCode: number, headers: Headers, body?: string) {
+    this.statusCode = statusCode;
+    this.headers = headers;
+    this.body = body;
+  }
 }
