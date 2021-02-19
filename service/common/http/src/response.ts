@@ -4,25 +4,35 @@ import { APIGatewayProxyStructuredResultV2 } from 'aws-lambda';
 export type Headers = { [header: string]: boolean | number | string };
 
 /**
- * Representation of a response from an API Gateway call.
+ * Interface that anything able to be a response should implement
  */
-export class Response implements APIGatewayProxyStructuredResultV2 {
-  /** The HTTP Status code */
+export interface Respondable<T> {
+  /** Determine the status code for the response */
+  statusCode(): number;
+  /** Determine the headers for the response */
+  headers(): Headers;
+  /** Determine the body of the response */
+  body(): T;
+}
+
+/**
+ * Representation of a response from an API Gateway call
+ */
+export class Response<T> implements APIGatewayProxyStructuredResultV2 {
+  /** The status code of the response */
   readonly statusCode: number;
-  /** The set of headers */
+  /** The headers of the response */
   readonly headers: Headers;
-  /** The response body */
-  readonly body?: string;
+  /** The body of the response */
+  readonly body: string;
 
   /**
    * Construct the response
-   * @param statusCode The status code
-   * @param headers The HTTP headers
-   * @param body The body
+   * @param respondable The respondable that represents the response details
    */
-  constructor(statusCode: number, headers: Headers, body?: string) {
-    this.statusCode = statusCode;
-    this.headers = headers;
-    this.body = body;
+  constructor(respondable: Respondable<T>) {
+    this.statusCode = respondable.statusCode();
+    this.headers = respondable.headers();
+    this.body = JSON.stringify(respondable.body());
   }
 }
