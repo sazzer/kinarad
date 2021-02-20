@@ -72,11 +72,7 @@ resource "aws_lambda_permission" "authorizer_lambda_permission" {
   source_arn    = join("/", [aws_apigatewayv2_api.api.execution_arn, "*", "*"])
 }
 
-data "aws_iam_policy" "AWSLambdaBasicExecutionRole" {
-  arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-}
-
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role       = aws_iam_role.authorizer_lambda_role.name
-  policy_arn = data.aws_iam_policy.AWSLambdaBasicExecutionRole.arn
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
