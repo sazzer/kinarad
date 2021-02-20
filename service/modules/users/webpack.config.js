@@ -1,8 +1,8 @@
-const webpackDefaults = require("@kinarad-service/webpack");
+const webpackDefaults = require('@kinarad-service/webpack');
 
 module.exports = {
   ...webpackDefaults,
   entry: {
-    get: "./src/lambdas/get/index.ts",
+    get: './src/lambdas/get.ts',
   },
 };
