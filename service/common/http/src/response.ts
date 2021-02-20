@@ -16,6 +16,43 @@ export interface Respondable<T> {
 }
 
 /**
+ * Base class for responsables that can have their status and headers defined.
+ */
+export abstract class AbstractRespondable<T> implements Respondable<T> {
+  private _status = 200;
+  private _headers: Headers = {};
+
+  statusCode(): number {
+    return this._status;
+  }
+
+  headers(): Headers {
+    return this._headers;
+  }
+
+  abstract body(): T;
+
+  /**
+   * Specify a new status code
+   * @param status The status code
+   */
+  withStatusCode(status: number): this {
+    this._status = status;
+    return this;
+  }
+
+  /**
+   * Specify a new header
+   * @param name The header name
+   * @param value The header value
+   */
+  withHeader(name: string, value: boolean | number | string): this {
+    this._headers[name] = value;
+    return this;
+  }
+}
+
+/**
  * Representation of a response from an API Gateway call
  */
 export class Response<T> implements APIGatewayProxyStructuredResultV2 {
