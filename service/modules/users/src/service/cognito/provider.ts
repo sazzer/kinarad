@@ -1,9 +1,4 @@
-import { AWSError, CognitoIdentityServiceProvider } from 'aws-sdk';
-
-import debug from 'debug';
-
-/** The logger to use */
-const LOGGER = debug('kinarad:users:service:cognito:provider');
+import CognitoIdentityServiceProvider from 'aws-sdk/clients/cognitoidentityserviceprovider';
 
 type AdminGetUserResponse = CognitoIdentityServiceProvider.Types.AdminGetUserResponse;
 
@@ -26,7 +21,6 @@ export function adminGetUser(username: string): Promise<AdminGetUserResponse> {
       },
       (err, data) => {
         if (err) {
-          LOGGER('Error accessing Cogito user pool %s: %o', COGNITO_USER_POOL, err);
           reject(err);
         } else {
           resolve(data);

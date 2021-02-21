@@ -1,29 +1,47 @@
 import { UserResource } from '../../user';
 import { adminGetUser } from './provider';
+import debug from 'debug';
+
+/** The logger to use */
+const LOGGER = debug('kinarad:users:service:cognito:getUser');
 
 /**
  * Load the user with the provided username
  * @param username The username of the user to load
  */
 export async function getUserByUsername(username: string): Promise<UserResource | undefined> {
-  const user = await adminGetUser(username);
+  try {
+    LOGGER('Loading user with username: %s', username);
+    const user = await adminGetUser(username);
+    LOGGER('Loaded user with username %s: %o', username, user);
 
-  if (username === 'sazzer') {
+    const bufferObj = Buffer.from(user.UserLastModifiedDate?.toISOString()!, 'utf8');
+    const version = bufferObj.toString('base64');
+
+    const email = user.UserAttributes?.find((att) => att.Name === 'email')?.Value;
+    const displayName = user.UserAttributes?.find((att) => att.Name === 'name')?.Value;
+
     return {
       identity: {
-        id: username,
-        version: 'someVersion',
-        created: new Date(),
-        updated: new Date(),
+        id: user.Username,
+        version,
+        created: user.UserCreateDate!,
+        updated: user.UserLastModifiedDate!,
       },
       data: {
-        email: 'graham@grahamcox.co.uk',
-        displayName: 'Graham',
-        enabled: true,
-        status: 'CONFIRMED',
+        email,
+        displayName,
+        enabled: user.Enabled ?? false,
+        status: user.UserStatus ?? 'UNKNOWN',
       },
     };
-  } else {
-    return undefined;
+  } catch (e) {
+    if (e.code === 'UserNotFoundException') {
+      LOGGER("User with username %s doesn't exist", username);
+      return undefined;
+    } else {
+      LOGGER('Error getting user with username %s: %o', username, e);
+      throw e;
+    }
   }
 }
