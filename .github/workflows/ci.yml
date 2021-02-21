@@ -18,6 +18,10 @@ jobs:
         working-directory: service
         run: yarn install
 
+      - name: Build Packages
+        working-directory: service
+        run: yarn build
+
       - name: Run tests
         working-directory: service
         run: yarn test
