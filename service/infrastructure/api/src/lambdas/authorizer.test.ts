@@ -20,11 +20,7 @@ test('No headers', async () => {
   nock.disableNetConnect();
 
   const result = await handler({
-    type: 'REQUEST',
     methodArn: 'some-method-arn',
-    resource: '',
-    path: '/api',
-    httpMethod: 'GET',
   } as APIGatewayRequestAuthorizerEvent);
 
   expect(result).toMatchInlineSnapshot(`
@@ -51,12 +47,7 @@ test('No authorization header', async () => {
   nock.disableNetConnect();
 
   const result = await handler({
-    type: 'REQUEST',
     methodArn: 'some-method-arn',
-    resource: '',
-    path: '/api',
-    httpMethod: 'GET',
-    headers: {},
   } as APIGatewayRequestAuthorizerEvent);
 
   expect(result).toMatchInlineSnapshot(`
@@ -83,11 +74,7 @@ test('Non-bearer authorization header', async () => {
   nock.disableNetConnect();
 
   const result = await handler({
-    type: 'REQUEST',
     methodArn: 'some-method-arn',
-    resource: '',
-    path: '/api',
-    httpMethod: 'GET',
     headers: {
       authorization: 'Basic dXNlcm5hbWU6cGFzc3dvcmQK',
     } as APIGatewayRequestAuthorizerEventHeaders,
@@ -117,11 +104,7 @@ test('Invalid token in header', async () => {
   nock.disableNetConnect();
 
   const result = await handler({
-    type: 'REQUEST',
     methodArn: 'some-method-arn',
-    resource: '',
-    path: '/api',
-    httpMethod: 'GET',
     headers: {
       authorization: 'Bearer Im-Malformed',
     } as APIGatewayRequestAuthorizerEventHeaders,
@@ -158,11 +141,7 @@ test('Valid token in header', async () => {
     });
 
   const result = await handler({
-    type: 'REQUEST',
     methodArn: 'some-method-arn',
-    resource: '',
-    path: '/api',
-    httpMethod: 'GET',
     headers: {
       authorization: `Bearer ${token}`,
     } as APIGatewayRequestAuthorizerEventHeaders,

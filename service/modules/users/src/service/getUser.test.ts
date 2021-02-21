@@ -15,6 +15,7 @@ afterAll(() => {
 test('Get unknown user', async () => {
   adminGetUserMock.mockImplementation((params, callback) => {
     expect(params.Username).toBe('unknown');
+    expect(params.UserPoolId).toBe('SomeUserPoolId');
     callback(
       {
         code: 'UserNotFoundException',
@@ -33,6 +34,7 @@ test('Error returned', async () => {
   };
   adminGetUserMock.mockImplementation((params, callback) => {
     expect(params.Username).toBe('unknown');
+    expect(params.UserPoolId).toBe('SomeUserPoolId');
     callback(error, undefined);
   });
 
@@ -42,6 +44,7 @@ test('Error returned', async () => {
 test('Get fully populated user', async () => {
   adminGetUserMock.mockImplementation((params, callback) => {
     expect(params.Username).toBe('known');
+    expect(params.UserPoolId).toBe('SomeUserPoolId');
     callback(undefined, {
       Username: 'known',
       UserAttributes: [
@@ -77,6 +80,7 @@ test('Get fully populated user', async () => {
 test('Get barely populated user', async () => {
   adminGetUserMock.mockImplementation((params, callback) => {
     expect(params.Username).toBe('known');
+    expect(params.UserPoolId).toBe('SomeUserPoolId');
     callback(undefined, {
       Username: 'known',
       UserAttributes: [],

@@ -7,6 +7,8 @@ module.exports = {
   notify: true,
   rootDir: 'src',
 
+  resetMocks: true,
+
   collectCoverage: true,
   coverageDirectory: path.join(__dirname, 'target/coverage'),
 };
