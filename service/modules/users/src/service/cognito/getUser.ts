@@ -15,7 +15,7 @@ export async function getUserByUsername(username: string): Promise<UserResource 
     const user = await adminGetUser(username);
     LOGGER('Loaded user with username %s: %o', username, user);
 
-    const bufferObj = Buffer.from(user.UserLastModifiedDate?.toISOString()!, 'utf8');
+    const bufferObj = Buffer.from(user.UserLastModifiedDate!.toISOString(), 'utf8');
     const version = bufferObj.toString('base64');
 
     const email = user.UserAttributes?.find((att) => att.Name === 'email')?.Value;

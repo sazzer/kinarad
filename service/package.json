@@ -2,11 +2,16 @@
   "name": "@kinarad-service/root",
   "version": "0.1.0",
   "private": true,
-  "workspaces": [
-    "common/*",
-    "infrastructure/*",
-    "modules/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "common/*",
+      "infrastructure/*",
+      "modules/*"
+    ],
+    "nohoist": [
+        "**/aws-sdk"
+    ]
+  },
   "scripts": {
     "tf:init": "terraform init",
     "tf:deploy": "terraform apply -auto-approve",
