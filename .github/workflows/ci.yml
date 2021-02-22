@@ -76,6 +76,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      TF_VAR_region: ${{ secrets.AWS_DEFAULT_REGION }}
 
     steps:
       - uses: actions/checkout@v1
@@ -86,45 +87,38 @@ jobs:
 
       - uses: hashicorp/setup-terraform@v1
 
-      - name: Get the git tag
-        run: echo GIT_TAG=$(echo ${GITHUB_REF} | sed -e "s/refs\/.*\///g") >> $GITHUB_ENV
-      - name: Get the Terraform Stage
-        run: echo TF_VAR_stage=ci-${GITHUB_RUN_ID} >> $GITHUB_ENV
-
-      - name: Terraform fmt
-        working-directory: service
-        run: terraform fmt -check
-        continue-on-error: true
-
-      - name: Terraform Init
-        working-directory: service
-        run: terraform init
-
-      - name: Terraform Validate
-        working-directory: service
-        run: terraform validate -no-color
-
-      - name: Install dependencies
-        working-directory: service
-        run: yarn install
+      - name: Tag-based config
+        run: |
+          echo GIT_TAG=$(echo ${GITHUB_REF} | sed -e "s/refs\/.*\///g") >> $GITHUB_ENV
+          echo TF_VAR_stage=ci-${GITHUB_RUN_ID} >> $GITHUB_ENV
 
       - name: Build service
         working-directory: service
-        run: yarn build
+        run: |
+          yarn install
+          yarn build
 
-      - name: Terraform Workspace
+      - name: Install e2e dependencies
+        working-directory: e2e
+        run: yarn install
+
+      - name: Deploy service
         working-directory: service
-        run: terraform workspace new ${TF_VAR_stage} || terraform workspace select ${TF_VAR_stage}
+        run: |
+          terraform init
+          terraform workspace new ${TF_VAR_stage} || terraform workspace select ${TF_VAR_stage}
+          terraform plan -no-color
+          terraform apply -auto-approve -no-color
 
-      - name: Terraform Plan
-        working-directory: service
-        run: terraform plan -no-color
+      - name: Generate Outputs
+        working-directory: e2e
+        run: terraform -chdir=../service output -json > env.json
 
-      - name: Terraform Apply
-        working-directory: service
-        run: terraform apply -auto-approve -no-color
+      - name: Run tests
+        working-directory: e2e
+        run: yarn test
 
-      - name: Terraform Destroy
+      - name: Destroy service
         if: ${{ always() }}
         working-directory: service
         run: terraform destroy -auto-approve -no-color
