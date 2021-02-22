@@ -1,0 +1,11 @@
+{
+  "name": "@kinarad-e2e/api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test": "echo Hi"
+  },
+  "devDependencies": {
+  },
+  "dependencies": {}
+}

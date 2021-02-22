@@ -4,12 +4,15 @@
   "private": true,
   "workspaces": {
     "packages": [
+      "api"
     ],
     "nohoist": [
-        "**/aws-sdk"
+      "**/aws-sdk"
     ]
   },
   "scripts": {
+    "test": "run-s test:api",
+    "test:api": "yarn workspace @kinarad-e2e/api test"
   },
   "devDependencies": {
     "lerna": "^3.22.1",
